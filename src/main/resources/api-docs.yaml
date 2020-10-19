@@ -1,0 +1,106 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /books:
+    get:
+      tags:
+      - book-controller
+      summary: Gets a list of all books in the shop.
+      operationId: getBooks
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: A list of all books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+  /books/book/{id}:
+    get:
+      tags:
+      - book-controller
+      summary: Gets a book by its ID.
+      operationId: getBook
+      parameters:
+      - name: id
+        in: path
+        description: ID of the book to fetch.
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: A book with requested ID does not exist or the book could not
+            be fetched.
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: A detail of the book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+  /books/book:
+    post:
+      tags:
+      - book-controller
+      summary: Creates a new book
+      operationId: addBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookToAdd'
+        required: true
+      responses:
+        "400":
+          description: Book could not be successfully added to the repository.
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: A newly created book.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+components:
+  schemas:
+    Book:
+      required:
+      - id
+      - title
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the book
+          format: int64
+          example: 1
+        title:
+          type: string
+          description: Title of the book
+          example: Catch XXII
+      description: A detail of the book.
+    BookToAdd:
+      type: object
+      properties:
+        title:
+          type: string
+      description: A book to be created.
